@@ -34,6 +34,7 @@
   "homepage": "https://github.com/DarbazAli/registration-system-with-mern#readme",
   "devDependencies": {
     "concurrently": "^6.0.0",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.7"
   }
 }
