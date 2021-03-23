@@ -6,6 +6,8 @@ import helmet from 'helmet'
 
 import { notFound, errorHandler } from './lib/errorMiddleware.js'
 
+import userRoutes from './routes/userRoutes.js'
+
 const app = express()
 
 app.use(bodyParser.json())
@@ -17,6 +19,9 @@ app.use(helmet())
 app.get('/', (req, res) => {
   res.send('API is working')
 })
+
+// user routes
+app.use('/api/users', userRoutes)
 
 /* Handling errors */
 app.use(notFound)
