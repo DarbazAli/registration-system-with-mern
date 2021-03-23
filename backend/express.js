@@ -4,6 +4,8 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 
+import { notFound, errorHandler } from './lib/errorMiddleware.js'
+
 const app = express()
 
 app.use(bodyParser.json())
@@ -15,5 +17,9 @@ app.use(helmet())
 app.get('/', (req, res) => {
   res.send('API is working')
 })
+
+/* Handling errors */
+app.use(notFound)
+app.use(errorHandler)
 
 export default app
