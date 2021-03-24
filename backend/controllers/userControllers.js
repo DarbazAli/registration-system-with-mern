@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
-
+import generateToken from '../lib/generateToken.js'
 /*================================================================
 CREATE NEW SUER
 @desc   Create new user
@@ -114,4 +114,29 @@ const userByID = async (req, res, next, id) => {
   }
 }
 
-export default { create, list, userByID, read, update, remove }
+/*============================================================================
+@desc   Auth the User
+@route  POST /api/users/login
+@access Public
+=============================================================================*/
+const authUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body
+  const user = await User.findOne({ email: email })
+
+  if (user && (await user.matchPassword(password))) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    })
+  } else if (user && !(await user.matchPassword(password))) {
+    res.status(401)
+    throw new Error('Password is incorrect!')
+  } else {
+    res.status(401)
+    throw new Error('Invalid email or password')
+  }
+})
+
+export default { create, list, userByID, read, update, remove, authUser }
