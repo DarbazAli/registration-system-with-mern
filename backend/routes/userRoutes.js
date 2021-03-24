@@ -4,10 +4,12 @@ const router = express.Router()
 
 router.route('/').post(userCtrl.create).get(userCtrl.list)
 
-// router
-//   .route('/:id')
-//   .get(userCtrl.read)
-//   .put(userCtrl.update)
-//   .delete(userCtrl.remove)
+router
+  .route('/:id')
+  .get(userCtrl.read)
+  .put(userCtrl.update)
+  .delete(userCtrl.remove)
+
+router.param('id', userCtrl.userByID)
 
 export default router

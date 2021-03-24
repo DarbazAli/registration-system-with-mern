@@ -1,6 +1,5 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
-import { errorHandler } from '../lib/errorMiddleware.js'
 
 /*================================================================
 CREATE NEW SUER
@@ -8,19 +7,18 @@ CREATE NEW SUER
 @route  POST /api/users
 @access Public
 ================================================================*/
-const create = asyncHandler(async (req, res) => {
+const create = async (req, res) => {
   const user = new User(req.body)
 
-  const savedUser = await user.save()
-  if (savedUser) {
+  try {
+    await user.save()
     return res.status(201).json({
       message: 'Successfully signed up!',
     })
-  } else {
-    res.status(401)
-    throw new Error('Invalid user data')
+  } catch (error) {
+    return res.status(404).json({ error: error })
   }
-})
+}
 
 /*================================================================
 LIST ALL USERS
@@ -29,7 +27,7 @@ LIST ALL USERS
 @access Public
 ================================================================*/
 const list = asyncHandler(async (req, res) => {
-  const users = await User.find({})
+  const users = await User.find({}).select('name email createdAt updatedAt')
   if (users) return res.status(200).json(users)
   else {
     res.status(401)
@@ -37,4 +35,83 @@ const list = asyncHandler(async (req, res) => {
   }
 })
 
-export default { create, list }
+/*================================================================
+Read single user
+@desc   Get a single user details
+@route  GET /api/users/:id
+@access Public
+================================================================*/
+const read = async (req, res) => {
+  try {
+    const user = req.user
+    user.password = undefined
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(404).json({ error: error })
+  }
+}
+
+/*================================================================
+UPDATE USER PROFILE
+@desc   Update user profile
+@route  PUT /api/users/:id
+@access Private
+================================================================*/
+const update = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id)
+  if (user) {
+    user.name = req.body.name || user.name
+    user.email = req.body.email || user.email
+    if (req.body.password) {
+      user.password = req.body.password
+    }
+    const updatedUser = await user.save()
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      updatedAt: updatedUser.updatedAt,
+    })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+})
+/*================================================================
+DELETE USER PROFIEL
+@desc   Delete user profile
+@route  delete /api/users/:id
+@access Private
+================================================================*/
+const remove = asyncHandler(async (req, res) => {
+  const user = req.user
+  console.log(user)
+  const deletedUser = await user.remove()
+  if (deletedUser) {
+    res.status(200).json({ message: 'User deleted successflly' })
+  } else {
+    res.status(404).json({ message: 'User not found' })
+  }
+})
+
+/*================================================================
+loading User by ID
+================================================================*/
+const userByID = async (req, res, next, id) => {
+  try {
+    const user = await User.findById(id)
+    if (!user) {
+      return res.status(400).json({
+        error: 'User not found',
+      })
+    }
+    req.user = user
+    next()
+  } catch (error) {
+    res.status(400).json({
+      error: 'Could not retrive user',
+    })
+  }
+}
+
+export default { create, list, userByID, read, update, remove }
