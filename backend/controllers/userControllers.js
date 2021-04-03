@@ -102,22 +102,22 @@ const remove = asyncHandler(async (req, res) => {
 /*================================================================
 loading User by ID
 ================================================================*/
-const userByID = async (req, res, next, id) => {
-  try {
-    const user = await User.findById(id)
-    if (!user) {
-      return res.status(400).json({
-        error: 'User not found',
-      })
-    }
-    req.user = user
-    next()
-  } catch (error) {
-    res.status(400).json({
-      error: 'Could not retrive user',
-    })
-  }
-}
+// const userByID = async (req, res, next, id) => {
+//   try {
+//     const user = await User.findById(id)
+//     if (!user) {
+//       return res.status(400).json({
+//         error: 'User not found',
+//       })
+//     }
+//     req.user = user
+//     next()
+//   } catch (error) {
+//     res.status(400).json({
+//       error: 'Could not retrive user',
+//     })
+//   }
+// }
 
 /*============================================================================
 @desc   Auth the User
@@ -149,7 +149,7 @@ const authUser = asyncHandler(async (req, res) => {
 @access Private
 =============================================================================*/
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id)
+  const user = await User.findById(req.user._id)
 
   if (user) {
     res.status(200).json({
@@ -166,7 +166,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 export default {
   create,
   list,
-  userByID,
+
   read,
   update,
   remove,

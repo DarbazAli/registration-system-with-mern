@@ -7,6 +7,7 @@ import {
   userListReducer,
   userLoginReducer,
   userRegisterReducer,
+  userUpdateProfileReducer,
 } from './reducers/userReducers'
 
 const reducers = combineReducers({
@@ -14,13 +15,22 @@ const reducers = combineReducers({
   userRegister: userRegisterReducer,
   userLogin: userLoginReducer,
   userDetails: userDetailsReducer,
+  userUpdate: userUpdateProfileReducer,
 })
+
+const userInfoFromStoreage = localStorage.getItem('userInfo')
+  ? JSON.parse(localStorage.getItem('userInfo'))
+  : null
+
+const initialState = {
+  userLogin: { userInfo: userInfoFromStoreage },
+}
 
 const middleware = [thunk]
 
 const store = createStore(
   reducers,
-
+  initialState,
   composeWithDevTools(applyMiddleware(...middleware))
 )
 
