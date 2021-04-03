@@ -76,6 +76,7 @@ const update = asyncHandler(async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       updatedAt: updatedUser.updatedAt,
+      token: generateToken(updatedUser._id),
     })
   } else {
     res.status(404)

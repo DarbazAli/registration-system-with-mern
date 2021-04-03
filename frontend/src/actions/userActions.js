@@ -175,12 +175,12 @@ export const updateUserProfile = (name, email, password) => async (
       type: USER_UPDATE_PROFILE_SUCCESS,
       payload: data,
     })
-    // dispatch({
-    //   type: USER_LOGIN_SUCCESS,
-    //   payload: data,
-    // })
+    dispatch({
+      type: USER_LOGIN_SUCCESS,
+      payload: data,
+    })
 
-    // localStorage.setItem('userInfo', JSON.stringify(data))
+    localStorage.setItem('userInfo', JSON.stringify(data))
   } catch (error) {
     const message =
       error.response && error.response.data.message
@@ -202,5 +202,5 @@ export const logout = () => (dispatch) => {
   localStorage.removeItem('userInfo')
   dispatch({ type: USER_LOGOUT })
   dispatch({ type: USER_DETAILS_RESET })
-  document.location.href = '/login'
+  document.location.href = '/'
 }
