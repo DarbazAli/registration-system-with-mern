@@ -16,7 +16,7 @@ const create = async (req, res) => {
       message: 'Successfully signed up!',
     })
   } catch (error) {
-    return res.status(404).json({ error: error })
+    return res.status(400).json({ error: error })
   }
 }
 
