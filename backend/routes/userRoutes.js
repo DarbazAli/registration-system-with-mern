@@ -4,6 +4,7 @@ import protect from '../lib/authMiddleware.js'
 const router = express.Router()
 
 router.route('/').post(userCtrl.create).get(userCtrl.list)
+router.route('/profile').get(protect, userCtrl.getUserProfile)
 
 router
   .route('/:id')

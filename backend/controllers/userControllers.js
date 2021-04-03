@@ -42,12 +42,17 @@ Read single user
 @access Public
 ================================================================*/
 const read = async (req, res) => {
-  try {
-    const user = req.user
-    user.password = undefined
-    return res.status(200).json(user)
-  } catch (error) {
-    return res.status(404).json({ error: error })
+  const user = await User.findById(req.user.id)
+
+  if (user) {
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
   }
 }
 
@@ -138,5 +143,33 @@ const authUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid email or password')
   }
 })
+/*============================================================================
+@desc   Get User profile
+@route  GET /api/users/profile
+@access Private
+=============================================================================*/
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id)
 
-export default { create, list, userByID, read, update, remove, authUser }
+  if (user) {
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+})
+
+export default {
+  create,
+  list,
+  userByID,
+  read,
+  update,
+  remove,
+  authUser,
+  getUserProfile,
+}

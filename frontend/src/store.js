@@ -3,6 +3,7 @@ import thunk from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
 
 import {
+  userDetailsReducer,
   userListReducer,
   userLoginReducer,
   userRegisterReducer,
@@ -12,6 +13,7 @@ const reducers = combineReducers({
   userList: userListReducer,
   userRegister: userRegisterReducer,
   userLogin: userLoginReducer,
+  userDetails: userDetailsReducer,
 })
 
 const middleware = [thunk]
