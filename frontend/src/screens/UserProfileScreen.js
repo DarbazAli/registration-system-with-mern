@@ -24,32 +24,24 @@ const UserProfileScreen = ({ history, match }) => {
 
   const { user, error, loading } = useSelector((state) => state.userDetails)
 
-  const {
-    loading: loadingUpdate,
-    success,
-    error: errorUpdate,
-    user: updatedUser,
-  } = useSelector((state) => state.userUpdate)
+  const { loading: loadingUpdate, success, error: errorUpdate } = useSelector(
+    (state) => state.userUpdate
+  )
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login')
-    }
-
-    if (success) {
-      dispatch({ type: USER_UPDATE_PROFILE_RESET })
-      dispatch(getUserDetails())
-      setName(updatedUser.name)
-      setEmail(updatedUser.email)
-    }
-
-    if (!user.name) {
-      dispatch(getUserDetails())
+      history.push('/login?redirect=/profile')
+      return
     } else {
-      setName(user.name)
-      setEmail(user.email)
+      if (!user || !user.name || success) {
+        dispatch({ type: USER_UPDATE_PROFILE_RESET })
+        dispatch(getUserDetails())
+      } else {
+        setName(user.name)
+        setEmail(user.email)
+      }
     }
-  }, [history, userInfo, dispatch, user, success, userId, updatedUser])
+  }, [history, userInfo, dispatch, user, success, userId])
 
   const submitHandler = (e) => {
     e.preventDefault()
@@ -65,6 +57,10 @@ const UserProfileScreen = ({ history, match }) => {
       <h1>Profile</h1>
       {loading && <Loader />}
       {error && <Message variant='danger'>{error}</Message>}
+      {message && <Message variant='danger'>{message}</Message>}
+      {success && <Message variant='success'>User updated</Message>}
+      {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
+      {loadingUpdate && <Loader />}
       {user && (
         <>
           <p>
@@ -79,10 +75,7 @@ const UserProfileScreen = ({ history, match }) => {
       )}
       <FormContainer>
         <h1>Edit Profile</h1>
-        {message && <Message variant='danger'>{message}</Message>}
-        {success && <Message variant='success'>User updated</Message>}
-        {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
-        {loadingUpdate && <Loader />}
+
         <Form onSubmit={submitHandler}>
           <Form.Group controlId='name'>
             <Form.Label>Name</Form.Label>
